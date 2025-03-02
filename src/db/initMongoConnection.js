@@ -3,6 +3,7 @@
 
 import mongoose from 'mongoose';
 
+
 const MongoDB_URL = `mongodb+srv://annartyuh90:wEv3PKwK1OLfuJTU@cluster0.9y3qj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 export const initMongoConnection = async () => {

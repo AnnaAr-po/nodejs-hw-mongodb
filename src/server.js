@@ -2,6 +2,10 @@ import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
 import { Contact } from './models/contacts.js';
+import dotenv from 'dotenv';
+
+
+dotenv.config();
 
 export function setupServer() {
   const app = express();
