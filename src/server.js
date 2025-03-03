@@ -3,6 +3,7 @@ import pino from 'pino-http';
 import cors from 'cors';
 import { Contact } from './models/contacts.js';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
 
 dotenv.config();
@@ -69,6 +70,15 @@ app.get('/contacts', async (req, res, next) => {
     });
   });
 
+
+    app.get('/test-db', async (req, res) => {
+  try {
+    await mongoose.connection.db.admin().ping();
+    res.status(200).json({ message: 'MongoDB connection is working!' });
+  } catch (error) {
+    res.status(500).json({ message: 'MongoDB connection failed!', error: error.message });
+  }
+});
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
