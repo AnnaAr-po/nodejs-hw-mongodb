@@ -4,28 +4,15 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 
-// const MongoDB_URL = `mongodb+srv://annartyuh90:wEv3PKwK1OLfuJTU@cluster0.9y3qj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-
-// export const initMongoConnection = async () => {
-//   return mongoose.connect(MongoDB_URL);
-// };
-// console.log('Mongo connection successfully established!');
-
-import { getEnvVar } from '../utils/getEnvVar.js';
-
 export const initMongoConnection = async () => {
   try {
-    const user = getEnvVar('MONGODB_USER');
-    const pwd = getEnvVar('MONGODB_PASSWORD');
-    const url = getEnvVar('MONGODB_URL');
-    const db = getEnvVar('MONGODB_DB');
+    const { MONGODB_USER, MONGODB_PASSWORD, MONGODB_URL, MONGODB_DB } = process.env;
+    const connectionString = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_URL}/${MONGODB_DB}?retryWrites=true&w=majority`;
 
-    await mongoose.connect(
-      `mongodb+srv://${user}:${pwd}@${url}/${db}?retryWrites=true&w=majority&appName=Cluster0`,
-    );
+    await mongoose.connect(connectionString);
     console.log('Mongo connection successfully established!');
   } catch (e) {
-    console.log('Error while setting up mongo connection', e);
+    console.error('Error while connecting to MongoDB:', e);
     throw e;
   }
 };
