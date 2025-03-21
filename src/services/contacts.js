@@ -51,10 +51,15 @@ export const getContactById = async (contactId) => {
   const contact = await Contacts.findById(contactId);
   return contact;
 };
-
 export const createContact = async (payload) => {
-  const contact = await Contacts.create(payload);
-  return contact;
+    try {
+        console.log("Received payload:", payload);
+        const contact = await Contacts.create(payload);
+        return contact;
+    } catch (error) {
+        console.error("Error creating contact:", error);
+        throw error;
+    }
 };
 
 export const updateContact = async (contactId, payload, options = {}) => {
