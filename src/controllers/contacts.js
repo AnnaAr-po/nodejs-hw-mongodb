@@ -94,7 +94,10 @@ export const patchContactController = async (req, res, next) => {
       return res.status(400).json({
         status: 400,
         message: 'Validation Error',
-        errors: formatValidationErrors(error)
+        errors: error.details.map(detail => ({
+          field: detail.path.join('.'),
+          message: detail.message
+        }))
       });
     }
 
@@ -107,7 +110,7 @@ export const patchContactController = async (req, res, next) => {
     res.status(200).json({
       status: 200,
       message: 'Successfully updated contact',
-      data: updatedContact,
+      data: updatedContact.contact
     });
   } catch (error) {
     console.error("Error in patchContactController:", error.stack);
