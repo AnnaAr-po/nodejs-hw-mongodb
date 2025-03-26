@@ -1,6 +1,6 @@
 import { SORT_ORDER } from '../constants/index.js';
 import createError from 'http-errors';
-import { Contacts } from '../models/contact.js';
+import { Contacts } from '../db/models/contact.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 

@@ -10,7 +10,7 @@ import {
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
-import { createContactSchema, updateContactSchema } from '../validation/validatecontacts.js';
+import { createContactSchema, updateContactSchema } from '../validation/contacts.js';
 
 
 const formatValidationErrors = (error) => {
