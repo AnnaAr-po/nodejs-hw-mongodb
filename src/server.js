@@ -14,8 +14,7 @@ export function setupServer() {
   app.use(cors());
   app.use(pino());
   app.use(cookieParser());
-  
-
+   app.use(router);
   app.use('/contacts', router);
 
   app.use('*', notFoundHandler);
