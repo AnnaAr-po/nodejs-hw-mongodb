@@ -1,13 +1,13 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import handlebars from 'handlebars';
+import path from 'node:path';
+import fs from 'node:fs/promises';
 import { randomBytes } from 'crypto';
 import createError from 'http-errors';
 import { UsersCollection } from '../db/models/users.js';
 import { SessionsCollection } from '../db/models/session.js';
 import { FIFTEEN_MINUTES, THIRTY_DAYS, TEMPLATES_DIR } from '../constants/index.js';
-import jwt from 'jsonwebtoken';
-import handlebars from 'handlebars';
-import path from 'node:path';
-import fs from 'node:fs/promises';
 import { SMTP } from '../constants/index.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { sendEmail } from '../utils/sendMail.js';

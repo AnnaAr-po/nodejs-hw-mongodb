@@ -1,6 +1,6 @@
 import { registerUser, loginUser, logoutUser, refreshUsersSession, requestResetToken, resetPassword } from '../services/auth.js';
 import { THIRTY_DAYS } from '../constants/index.js';
-
+import { requestResetEmailSchema } from '../validation/auth.js';
 
 
 export const registerUserController = async (req, res) => {
@@ -80,13 +80,26 @@ export const logoutUserController = async (req, res) => {
 };
 
 
-export const requestResetEmailController = async (req, res) => {
-  await requestResetToken(req.body.email);
-  res.json({
-    message: 'Reset password email was successfully sent!',
-    status: 200,
-    data: {},
-  });
+export const requestResetEmailController = async (req, res, next) => {
+  try {
+    const { error } = requestResetEmailSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({
+        status: 400,
+        message: 'Validation Error',
+        errors: error.details.map(detail => detail.message)
+      });
+    }
+
+    await requestResetToken(req.body.email);
+    res.json({
+      message: 'Reset password email was successfully sent!',
+      status: 200,
+      data: {},
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 export const resetPasswordController = async (req, res) => {
