@@ -56,7 +56,16 @@ export const getContactById = async (contactId, userId) => {
 export const createContact = async (payload, userId) => {
   try {
     console.log("Received payload:", payload);
-    const contact = await Contacts.create({ ...payload, userId });
+    console.log("User ID to be used:", userId);
+    
+    const contactData = { 
+      ...payload, 
+      userId 
+    };
+    
+    console.log("Final data to create contact:", contactData);
+    
+    const contact = await Contacts.create(contactData);
     return contact;
   } catch (error) {
     console.error("Error creating contact:", error);
