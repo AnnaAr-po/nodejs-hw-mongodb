@@ -55,15 +55,11 @@ export const getContactById = async (contactId, userId) => {
 
 export const createContact = async (payload, userId) => {
   try {
-    console.log("Received payload:", payload);
-    console.log("User ID to be used:", userId);
-    
     const contactData = { 
       ...payload, 
       userId 
     };
     
-    console.log("Final data to create contact:", contactData);
     
     const contact = await Contacts.create(contactData);
     return contact;

@@ -19,11 +19,9 @@ import { getEnvVar } from '../utils/getEnvVar.js';
 
 export const createContactController = async (req, res, next) => {
   try {
-
     const userId = req.user._id;
-    const photo = req.file;
-
     const { error } = createContactSchema.validate(req.body, { abortEarly: false });
+
     if (error) {
       return res.status(400).json({
         status: 400,
@@ -34,29 +32,27 @@ export const createContactController = async (req, res, next) => {
         }))
       });
     }
-
-    if (!photo) {
-      return res.status(400).json({
-        status: 400,
-        message: 'Photo is required',
-      });
-    }
-
-    let photoUrl;
-    const useCloudinary = getEnvVar('ENABLE_CLOUDINARY') === 'true';
-
-    if (photo) {
-      photoUrl = useCloudinary
-        ? await saveFileToCloudinary(photo)
-        : await saveFileToUploadDir(photo);
-    }
-
-    const contactPayload = {
+    const contactData = {
       ...req.body,
-      photo: photoUrl,
+      userId
     };
 
-    const newContact = await createContact(contactPayload, userId);
+    if (req.file) {
+      try {
+        const useCloudinary = getEnvVar('ENABLE_CLOUDINARY') === 'true';
+        const photoUrl = useCloudinary
+          ? await saveFileToCloudinary(req.file)
+          : await saveFileToUploadDir(req.file);
+        
+        contactData.photo = photoUrl;
+        console.log('Photo URL:', photoUrl);
+      } catch (fileError) {
+        console.error("Error saving file:", fileError);
+
+      }
+    }
+
+    const newContact = await createContact(contactData, userId);
 
     res.status(201).json({
       status: 201,
@@ -64,7 +60,7 @@ export const createContactController = async (req, res, next) => {
       data: newContact,
     });
   } catch (error) {
-    console.error("💥 Error in createContactController:", error.stack);
+    console.error("Error in createContactController:", error.stack);
     next(error);
   }
 };
@@ -124,12 +120,14 @@ export const updateContactController = async (req, res, next) => {
 export const patchContactController = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    console.log('req.user:', req.user);
     const userId = req.user._id;
-    const photo = req.file;
 
-    if (!mongoose.isValidObjectId(contactId)) {
-      return next(createError(400, 'Invalid ID format'));
+    const existingContact = await getContactById(contactId, userId);
+    if (!existingContact) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Contact not found',
+      });
     }
 
     const { error } = updateContactSchema.validate(req.body, { abortEarly: false });
@@ -143,37 +141,32 @@ export const patchContactController = async (req, res, next) => {
         }))
       });
     }
+    const updatedData = { ...req.body };
 
-    let updateData = { ...req.body };
-    
-    if (photo) {
-      const photoUrl = getEnvVar('ENABLE_CLOUDINARY') === 'true'
-        ? await saveFileToCloudinary(photo)
-        : await saveFileToUploadDir(photo);
-      
-      updateData.photo = photoUrl;
+    if (req.file) {
+      try {
+        const useCloudinary = getEnvVar('ENABLE_CLOUDINARY') === 'true';
+        updatedData.photo = useCloudinary
+          ? await saveFileToCloudinary(req.file)
+          : await saveFileToUploadDir(req.file);
+        console.log('Updated photo URL:', updatedData.photo);
+      } catch (fileError) {
+        console.error("Error saving file:", fileError);
+      }
     }
 
-    const updatedContact = await updateContact(contactId, { 
-      ...updateData,
-      userId
-    });
-
-    if (!updatedContact) {
-      return next(createError(404, 'Contact not found'));
-    }
+    const updatedContact = await updateContact(contactId, updatedData, userId);
 
     res.status(200).json({
       status: 200,
-      message: 'Successfully updated contact',
-      data: updatedContact
+      message: 'Contact updated successfully',
+      data: updatedContact,
     });
   } catch (error) {
     console.error("Error in patchContactController:", error.stack);
     next(error);
   }
 };
-
 
 export const getContactsController = async (req, res, next) => {
   try {
