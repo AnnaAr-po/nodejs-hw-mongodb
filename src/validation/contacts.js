@@ -13,7 +13,6 @@ export const createContactSchema = Joi.object({
     }
     return true;
   }),
-  photo: Joi.string(),
 });
 
 export const updateContactSchema = Joi.object({
@@ -28,5 +27,4 @@ export const updateContactSchema = Joi.object({
     }
     return true;
   }),
-  photo: Joi.string(),
 });
