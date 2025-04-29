@@ -1,41 +1,21 @@
 import { Contact } from '../models/contact.js';
 
-export const getAllContacts = async (req, res) => {
-  try {
-    const contacts = await Contact.find();
-    res.status(200).json({
-      status: 200,
-      message: 'Successfully found contacts!',
-      data: contacts,
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: 500,
-      message: 'Server error',
-      error: error.message,
-    });
-  }
+export const getAllContacts = async () => {
+  return await Contact.find();
 };
 
-export const getContactById = async (req, res) => {
-  const { contactId } = req.params;
+export const getContactById = async (id) => {
+  return await Contact.findById(id);
+};
 
-  try {
-    const contact = await Contact.findById(contactId);
-    if (!contact) {
-      return res.status(404).json({ message: 'Contact not found' });
-    }
+export const createContact = async (contactData) => {
+  return await Contact.create(contactData);
+};
 
-    res.status(200).json({
-      status: 200,
-      message: `Successfully found contact with id ${contactId}!`,
-      data: contact,
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: 500,
-      message: 'Server error',
-      error: error.message,
-    });
-  }
+export const updateContact = async (id, contactData) => {
+  return await Contact.findByIdAndUpdate(id, contactData, { new: true });
+};
+
+export const deleteContact = async (id) => {
+  return await Contact.findByIdAndDelete(id);
 };
